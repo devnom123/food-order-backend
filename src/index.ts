@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
 import userRoute from "./routes/userRoutes";
+import restaurantRoute from "./routes/restaurantRoutes";
 
 mongoose.connect(process.env.DB_URL as string).then(() => {
   console.log("Connected to the database");
@@ -20,6 +21,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/user", userRoute);
+app.use("/api/restaurant", restaurantRoute);
 
 const PORT = process.env.PORT || 5000;
 
