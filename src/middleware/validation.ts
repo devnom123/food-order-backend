@@ -11,8 +11,22 @@ const handleValidationErrors = (req:Request, res:Response, next:NextFunction) =>
 
 export const validateMyUserRequest = [
     body("name").isString().notEmpty().withMessage("Name is required"),
-    body("address").isString().notEmpty().withMessage("Address Line 1 is required"),
+    body("address").isString().notEmpty().withMessage("Address is required"),
     body("city").isString().notEmpty().withMessage("City is required"),
     body("country").isString().notEmpty().withMessage("Country is required"),
+    handleValidationErrors
+]
+
+export const validateRestaurantRequest = [
+    body("name").isString().notEmpty().withMessage("Name is required"),
+    body("address").isString().notEmpty().withMessage("Address is required"),
+    body("city").isString().notEmpty().withMessage("City is required"),
+    body("country").isString().notEmpty().withMessage("Country is required"),
+    body("deliveryFee").isNumeric().notEmpty().withMessage("Delivery Fee is required"),
+    body("estimatedDeliveryTime").isNumeric().notEmpty().withMessage("Estimated Delivery Time is required"),
+    body("cuisines").isArray().notEmpty().withMessage("Cuisines is required"),
+    body("menuItems").isArray().notEmpty().withMessage("Menu Items is required"),
+    body("menuItems.*.name").isString().notEmpty().withMessage("Menu Item Name is required"),
+    body("menuItems.*.price").isNumeric().notEmpty().withMessage("Menu Item Price is required"),
     handleValidationErrors
 ]
