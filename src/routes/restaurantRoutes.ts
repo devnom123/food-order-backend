@@ -7,6 +7,9 @@ import { validateRestaurantRequest } from '../middleware/validation';
 
 router.use(jwtCheck);
 router.use(jwtParse);
-router.post("/", uploadImage, validateRestaurantRequest, restaurantController.createMyRestaurant)
+// router.post("/", uploadImage, validateRestaurantRequest, restaurantController.createMyRestaurant)
+router.post("/", uploadImage,  restaurantController.createMyRestaurant)
+router.get("/", restaurantController.getMyRestaurant)
+router.put("/", uploadImage, restaurantController.updateMyRestaurant)
 
 export default router;
