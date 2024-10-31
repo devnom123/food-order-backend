@@ -19,6 +19,7 @@ export const jwtCheck = auth({
 });
 
 export const jwtParse = async(req: Request, res: Response, next: NextFunction) => {
+  console.log("i am here")
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     const token = req.headers.authorization.split(' ')[1];
     try {

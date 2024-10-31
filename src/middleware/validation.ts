@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 
 const handleValidationErrors = (req:Request, res:Response, next:NextFunction) => {
     const errors = validationResult(req);
@@ -28,5 +28,14 @@ export const validateRestaurantRequest = [
     body("menuItems").isArray().notEmpty().withMessage("Menu Items is required"),
     body("menuItems.*.name").isString().notEmpty().withMessage("Menu Item Name is required"),
     body("menuItems.*.price").isNumeric().notEmpty().withMessage("Menu Item Price is required"),
+    handleValidationErrors
+]
+
+export const searchRestaurantRequest = [
+    param("city").isString().notEmpty().withMessage("City is required"),
+    query("searchQuery").optional().isString(),
+    query("selectedCuisines").optional().isString(),
+    query("sortOption").optional().isString(),
+    query("page").optional().isNumeric(),
     handleValidationErrors
 ]

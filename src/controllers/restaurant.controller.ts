@@ -75,8 +75,94 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     }
 }
 
+const searchRestaurants = async (req: Request, res: Response) => {
+    try {
+        const { city } = req.params;
+
+        const searchQuery = (req.query.searchQuery as string) || "";
+        const selectedCuisines = (req.query.selectedCuisines as string) || "";
+        const sortOption = (req.query.sortOption as string) || "lastUpdated";
+        const page = parseInt((req.query.page as string)) || 1;
+
+        interface Query {
+            city: {
+                $regex: string,
+                $options: string
+            },
+            cuisines?: {
+                $all: string[]
+            },
+            $or?: [
+                {
+                    name: {
+                        $regex: string,
+                        $options: string
+                    },
+                },
+                {
+                    cuisines: {
+                        $in: string[]
+                    }
+                }
+            ]
+        }
+
+        let query: Query = {
+            city: {
+                $regex: city as string,
+                $options: 'i'
+            }
+        }
+
+        if (selectedCuisines) {
+            query['cuisines'] = {
+                $all: selectedCuisines.split(",")
+            }
+        }
+
+        if (searchQuery) {
+            query['$or'] = [
+                {
+                    name: {
+                        $regex: searchQuery,
+                        $options: 'i'
+                    }
+                },
+                {
+                    cuisines: {
+                        $in: searchQuery.split(",")
+                    }
+                }
+            ]
+        }
+
+        const pageSize = 10;
+        const skip = pageSize * (page - 1);
+
+        const restaurants = await Restaurant.find(query)
+            .sort({ [sortOption]: -1 })
+            .skip(skip)
+            .limit(pageSize);
+
+        const totalRestaurants = await Restaurant.countDocuments(query);    
+
+        return res.status(200).json({
+            data: restaurants,
+            meta: {
+                totalRestaurants,
+                totalPages: Math.ceil(totalRestaurants / pageSize),
+                currentPage: page
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
+    }
+}
+
 export default {
     createMyRestaurant,
     getMyRestaurant,
-    updateMyRestaurant
+    updateMyRestaurant,
+    searchRestaurants
 }
